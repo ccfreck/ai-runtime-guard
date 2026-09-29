@@ -12,47 +12,26 @@ AI Runtime Guard is a security gateway that sits between your application and AI
 
 ## Architecture
 
-```
-┌──────────────┐
-│ Application  │
-└──────┬───────┘
-       │ POST /inspect
-       ▼
-┌─────────────────────────────────────────┐
-│         AI Runtime Guard (FastAPI)      │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │      Detection Engine           │   │
-│  │                                 │   │
-│  │  ┌──────────┐  ┌──────────┐    │   │
-│  │  │  Secret  │  │   Rate   │    │   │
-│  │  │ Detector │  │ Detector │    │   │
-│  │  └──────────┘  └──────────┘    │   │
-│  │  ┌──────────┐  ┌──────────┐    │   │
-│  │  │  Prompt  │  │  Token   │    │   │
-│  │  │ Detector │  │ Detector │    │   │
-│  │  └──────────┘  └──────────┘    │   │
-│  │  ┌──────────┐                  │   │
-│  │  │ Anomaly  │                  │   │
-│  │  │ Detector │                  │   │
-│  │  └──────────┘                  │   │
-│  │                                 │   │
-│  │        Risk Score = Σ           │   │
-│  └────────────┬────────────────────┘   │
-│               │                        │
-│      ┌────────┴────────┐              │
-│      ▼                 ▼              │
-│  Allowed           Blocked            │
-│  (score < 10)      (score >= 10)      │
-│                         │              │
-│                         ▼              │
-│                ┌────────────────┐     │
-│                │ Alert Manager  │     │
-│                │ → Console      │     │
-│                │ → Webhook      │     │
-│                │ → SIEM (CEF)   │     │
-│                └────────────────┘     │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A[Application] -->|POST /inspect| B[AI Runtime Guard]
+    B --> C[Detection Engine]
+    C --> D[Rate Detector]
+    C --> E[Secret Detector]
+    C --> F[Prompt Detector]
+    C --> G[Token Detector]
+    C --> H[Anomaly Detector]
+    D --> I{Risk Assessment}
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    I -->|score < 10| J[Allowed → AI API]
+    I -->|score >= 10| K[Blocked]
+    K --> L[Alert Manager]
+    L --> M[Console Log]
+    L --> N[Webhook]
+    L --> O[SIEM / CEF]
 ```
 
 ---
