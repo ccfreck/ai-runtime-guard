@@ -180,7 +180,7 @@ ai-runtime-guard/
 
 ## NEXT STEPS
 
-WIP
+WIP - Create video showcasing what it does
 
 ---
 
